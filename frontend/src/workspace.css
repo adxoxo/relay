@@ -1,0 +1,444 @@
+/* Terminal workspace (2026-10-13). Loaded after styles.css (main.tsx).
+   Each session pane is its terminal. The header keeps identity and status;
+   Interrupt and End sit in the actions menu. A pending permission request
+   shows above the terminal. The switch strip shows where the session list is
+   hidden (phone, phone landscape). Two panes on wide screens (App.tsx SPLIT):
+   a list pick fills the active pane. */
+
+.chat-head {
+  position: relative;
+}
+
+.chat-title {
+  min-width: 0;
+}
+
+.chat-title h2,
+.chat-title p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pane-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.pane-tools .icon-button {
+  min-width: 36px;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+}
+
+body.touch .pane-tools .icon-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.pane-menu-wrap {
+  position: relative;
+}
+
+.pane-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 20;
+  min-width: 190px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 10px 28px #25311c26;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pane-menu button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 7px;
+  font-size: 13px;
+  text-align: left;
+}
+
+.pane-menu button:hover:not(:disabled),
+.pane-menu button:focus-visible {
+  background: #f4f4ef;
+}
+
+.pane-menu button:disabled {
+  opacity: 0.45;
+}
+
+.pane-menu svg {
+  width: 15px;
+  height: 15px;
+}
+
+.pending-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #ead6b8;
+  background: #fffcf6;
+  color: #9b6b2b;
+  font-size: 12px;
+}
+
+.pending-bar > svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.pending-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.pending-text code {
+  color: #837150;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pending-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.pending-buttons .primary {
+  background: #ac793b;
+  border-color: #ac793b;
+  color: #fff;
+}
+
+body.touch .pending-buttons .button {
+  min-height: 44px;
+}
+
+.pending-hint {
+  font-size: 11px;
+  color: #8e806c;
+}
+
+.session-switch {
+  display: none;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.session-switch-row {
+  display: flex;
+  gap: 6px;
+  padding: 6px 10px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+
+.session-switch-row::-webkit-scrollbar {
+  display: none;
+}
+
+.switch-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  max-width: 180px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 13px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body.touch .switch-chip {
+  min-height: 44px;
+}
+
+.switch-chip.current {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+  font-weight: 600;
+}
+
+.switch-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.switch-flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--amber);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.switch-new svg {
+  width: 16px;
+  height: 16px;
+}
+
+.state-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #abb09f;
+}
+
+.state-dot.working {
+  background: var(--green);
+}
+
+.state-dot.waiting {
+  background: #ca9140;
+}
+
+.state-dot.exited,
+.state-dot.done {
+  background: #c5cabc;
+}
+
+.agent-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pane-tag {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--accent);
+  border: 1px solid #f0b79f;
+  border-radius: 5px;
+  padding: 4px 6px;
+  white-space: nowrap;
+}
+
+.agent-pending {
+  margin: 10px 0 0;
+  padding: 6px 8px;
+  border-radius: 7px;
+  background: #fbf0df;
+  color: var(--amber);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.saved-transcript {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 14px 20px;
+  background: #22281f;
+  color: #c2cbb6;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.saved-transcript-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: #d7dcca;
+}
+
+.saved-transcript-head .button {
+  background: #313a2c;
+  border-color: #45503c;
+  color: #d7dcca;
+  min-height: 40px;
+}
+
+/* Two terminal panes beside the session list. */
+.dashboard.split {
+  grid-template-columns: 250px minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.dashboard.split .chat-head {
+  padding: 12px 14px;
+}
+
+.dashboard.split .agent-card {
+  padding: 13px;
+}
+
+.conversation.active-pane {
+  border-color: #dd9879;
+  box-shadow: 0 0 0 1px #dd987966;
+}
+
+.pane-empty .empty-state {
+  margin: auto 0;
+}
+
+@media (max-width: 760px) {
+  .chat-head {
+    padding: 8px 12px;
+  }
+  .chat-open .conversation {
+    border: 0;
+  }
+  .session-switch {
+    display: block;
+  }
+  .pending-bar {
+    padding: 8px 12px;
+  }
+  .pending-buttons .button {
+    font-size: 13px;
+  }
+  .chat-open .terminal-wrap {
+    padding: 4px 4px 0;
+  }
+  /* Keyboard up: the terminal, its keys and the text field keep the space.
+     Back, name and status stay in the header. */
+  body.chat-open.kb-open .session-switch {
+    display: none;
+  }
+  /* A toast shows over the terminal, never over the keys or the text field. */
+  body.chat-open.touch .toast-stack {
+    bottom: 220px;
+  }
+}
+
+/* Phone landscape: body.phone-screen is the physical screen (Root.tsx). The
+   viewport height is not used, so a tablet keyboard never selects this layout. */
+@media (pointer: coarse) and (min-width: 761px) {
+  body.phone-screen .session-switch {
+    display: block;
+  }
+  body.phone-screen.chat-open .chat-head {
+    padding: 4px 12px;
+  }
+  body.phone-screen .session-switch-row {
+    padding: 3px 10px;
+  }
+  body.phone-screen.chat-open.kb-open .session-switch,
+  body.phone-screen.chat-open.kb-open .pending-hint {
+    display: none;
+  }
+}
+
+/* Open terminal workspace on a tablet or desktop (body.workspace-open, App.tsx).
+   Compact counts replace the hero and the metric cards. The workspace fills the
+   visible viewport (--vvh behind a touch keyboard, else 100dvh): the panes keep
+   their controls on screen, and a long session list scrolls in its own region.
+   The pane height no longer follows the list, so a card change never resizes
+   a terminal. */
+@media (min-width: 761px) {
+  body.workspace-open:not(.phone-screen) .app-shell {
+    min-height: 0;
+  }
+  body.workspace-open:not(.phone-screen) .main {
+    display: flex;
+    flex-direction: column;
+    height: var(--vvh, 100dvh);
+    min-height: 0;
+    padding-bottom: 12px;
+    overflow: hidden;
+  }
+  body.workspace-open:not(.phone-screen) .topbar {
+    height: 56px;
+    flex-shrink: 0;
+  }
+  body.workspace-open:not(.phone-screen) .intro,
+  body.workspace-open:not(.phone-screen) .metrics,
+  body.workspace-open:not(.phone-screen) .bottom-info {
+    display: none;
+  }
+  body.workspace-open:not(.phone-screen) .phone-head {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    flex-shrink: 0;
+    padding: 10px 0 8px;
+  }
+  body.workspace-open:not(.phone-screen) .phone-head h1 {
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: -0.3px;
+  }
+  body.workspace-open:not(.phone-screen) .phone-counts {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  body.workspace-open:not(.phone-screen) .phone-counts b {
+    color: var(--ink);
+  }
+  body.workspace-open:not(.phone-screen) .workspace-line {
+    flex-shrink: 0;
+    margin-bottom: 10px;
+  }
+  body.workspace-open:not(.phone-screen) .dashboard {
+    flex: 1;
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr);
+  }
+  body.workspace-open:not(.phone-screen) .agent-list {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 1px 4px 1px 1px;
+  }
+  body.workspace-open:not(.phone-screen) .conversation {
+    align-self: stretch;
+    height: auto;
+    min-height: 0;
+  }
+  body.workspace-open:not(.phone-screen) .terminal-wrap,
+  body.workspace-open:not(.phone-screen) .terminal-host {
+    min-height: 0;
+  }
+  /* Tablet keyboard up: only the overview chrome hides. Both panes stay
+     mounted with their sessions, drafts and focus; the list stays beside them. */
+  body.workspace-open.kb-open:not(.phone-screen) .topbar,
+  body.workspace-open.kb-open:not(.phone-screen) .phone-head,
+  body.workspace-open.kb-open:not(.phone-screen) .workspace-line {
+    display: none;
+  }
+  body.workspace-open.kb-open:not(.phone-screen) .main {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  body.workspace-open.kb-open:not(.phone-screen) .pending-hint {
+    display: none;
+  }
+}

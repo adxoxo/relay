@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# relay CLI wrapper.
+# Resolve the repository from this script's own real path, set PYTHONPATH to
+# the backend package root, and run the CLI with the venv interpreter.
+set -euo pipefail
+
+self="$(readlink -f "$0")"
+bin_dir="$(dirname "$self")"
+repo="$(dirname "$bin_dir")"
+
+export PYTHONPATH="$repo/backend${PYTHONPATH:+:$PYTHONPATH}"
+exec "$repo/.venv/bin/python" -m relay "$@"

@@ -1,0 +1,19 @@
+# relay web service (systemd user unit).
+# Rendered by 'relay service install': @REPO@, @PYTHON@, @PODMAN@ become absolute paths.
+# Do not set NoNewPrivileges or ProtectHome. Rootless podman needs the setuid
+# newuidmap and newgidmap helpers, and those hardening options break them.
+[Unit]
+Description=relay agent dashboard
+
+[Service]
+Type=simple
+WorkingDirectory=@REPO@/backend
+Environment=PYTHONPATH=@REPO@/backend
+Environment=PYTHONUNBUFFERED=1
+ExecStart=@PYTHON@ -m relay serve
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=10
+
+[Install]
+WantedBy=default.target

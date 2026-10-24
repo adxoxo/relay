@@ -1,0 +1,228 @@
+/* Terminal history view (TerminalPane). It covers exactly the terminal area
+   (position and size come from the component), so the frame, the key bar and
+   the Back to live pill keep their places. Colors are the terminal theme. */
+
+.terminal-wrap .term-live-pill {
+  min-height: 44px; /* touch target; style and position stay in styles.css */
+}
+
+.term-history {
+  position: absolute;
+  z-index: 4; /* under the pill (6) and the connection overlay (5) */
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y; /* a finger scrolls this view natively */
+  -webkit-overflow-scrolling: touch;
+  /* Room at the bottom, so the pill never covers the newest line. */
+  padding: 6px 6px 64px;
+  background: #22281f;
+  color: #c2cbb6;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: var(--term-font, 12px); /* the terminal's size (TerminalPane.tsx) */
+  line-height: 1.45;
+}
+
+.term-history:focus-visible {
+  outline: 1px solid #45503c;
+  outline-offset: -1px;
+}
+
+.term-history-item {
+  margin: 0 0 10px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.term-history-role {
+  display: block;
+  color: #888f7e;
+  font-size: 11px;
+}
+
+.term-history-item.user {
+  color: #e8ac73;
+}
+
+.term-history-item.tool {
+  color: #a3ab96;
+}
+
+.term-history-note {
+  margin: 0 0 10px;
+  color: #a3ab96;
+  font-style: italic;
+  overflow-wrap: anywhere;
+}
+
+.term-history-older {
+  display: block;
+  min-height: 44px;
+  min-width: 44px;
+  margin: 0 0 10px;
+  padding: 8px 14px;
+  border: 1px solid #45503c;
+  border-radius: 7px;
+  background: #2c342a;
+  color: #c2cbb6;
+  font: inherit;
+}
+
+.term-history-older:disabled {
+  opacity: 0.7;
+}
+
+.term-history-live-note {
+  position: absolute;
+  z-index: 6;
+  box-sizing: border-box;
+  transform: translateY(-100%);
+  padding: 8px 10px;
+  border: 1px solid #45503c;
+  border-radius: 7px;
+  background: #2c342aee;
+  color: #d7dcca;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  pointer-events: none; /* the terminal under it stays usable */
+}
+
+/* The label keeps a saved transcript apart from the live terminal. */
+.term-history-label {
+  position: sticky;
+  top: -6px;
+  z-index: 1;
+  margin: -6px -6px 10px;
+  padding: 6px 8px;
+  background: #2c342a;
+  color: #e8ac73;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.saved-transcript .term-history-label {
+  margin: 0 0 10px;
+  top: -12px;
+}
+
+/* Phone (the physical screen, TerminalPane.tsx): a thinner frame gives the
+   terminal more cells. The phone portrait rule in workspace.css (4px 4px 0)
+   comes later in the bundle and stays as it is. FitAddon reads the padding. */
+.terminal-wrap.term-phone {
+  padding: 6px;
+}
+
+.terminal-wrap.term-phone .terminal-host .xterm {
+  padding: 3px;
+}
+
+/* The terminal's own input field (xterm). A field under 16px can make a phone
+   browser zoom on focus; the field is invisible, so this changes nothing on
+   screen. The Samsung focus zoom cause is not verified on a device. */
+.terminal-host .xterm .xterm-helper-textarea {
+  font-size: 16px !important;
+}
+
+/* Key bar and text field (touch). One block, measured as --keybar-h, so the
+   Back to live pill stays above both. */
+.term-input {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 0 4px;
+}
+
+.term-input .key-bar {
+  padding: 0;
+}
+
+.term-input button {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.key-bar button:disabled {
+  opacity: 0.4;
+}
+
+.term-compose {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.term-compose-field {
+  flex: 1 1 160px;
+  min-width: 0;
+  height: 52px;
+  resize: none;
+  padding: 6px 10px;
+  border: 1px solid #45503c;
+  border-radius: 8px;
+  background: #2c342a;
+  color: #e3e8d9;
+  font: 16px/1.35 ui-monospace, SFMono-Regular, monospace;
+}
+
+.term-compose-field::placeholder {
+  color: #8f977f;
+}
+
+.term-compose-field:focus {
+  outline: 2px solid #e8ac73;
+  outline-offset: -1px;
+}
+
+.term-compose .term-compose-insert,
+.term-compose .term-compose-send {
+  min-width: 64px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  justify-content: center;
+}
+
+.term-compose-insert {
+  border: 1px solid #45503c;
+  background: #2c342a;
+  color: #c2cbb6;
+}
+
+.term-compose-insert:disabled {
+  opacity: 0.45;
+}
+
+.term-compose-note {
+  flex-basis: 100%;
+  margin: 0;
+  color: #e8ac73;
+  font-size: 12px;
+}
+
+/* Phone landscape (body.phone-screen: the physical screen, Root.tsx): the keys
+   and the text field share one row. */
+@media (pointer: coarse) and (min-width: 761px) {
+  body.phone-screen .term-input {
+    flex-direction: row;
+    align-items: stretch;
+  }
+  body.phone-screen .term-input .key-bar {
+    flex: 0 1 auto;
+    flex-wrap: nowrap;
+  }
+  body.phone-screen .term-compose {
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+  }
+  body.phone-screen .term-compose-field {
+    height: 44px;
+  }
+  body.phone-screen .term-compose-note {
+    display: none;
+  }
+}

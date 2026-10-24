@@ -1,0 +1,297 @@
+/* Approved Relay redesign, 2026-10-21. Terminal geometry, font density,
+   keyboard controls and transport remain in their existing stylesheets. */
+@font-face {
+  font-family: Geist;
+  src: url("./fonts/geist-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("./fonts/geist-mono-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+:root {
+  --bg: #f6f5f2;
+  --ink: #242321;
+  --muted: #706d66;
+  --line: #e9e7e2;
+  --accent: #c4522b;
+  --green: #3d7255;
+  --amber: #946319;
+  --radius: 12px;
+  --relay-ease: cubic-bezier(0.23, 1, 0.32, 1);
+}
+html { -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
+body { font-family: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+button, a, [role="button"] { touch-action: manipulation; }
+button { -webkit-user-select: none; user-select: none; transition: transform 120ms var(--relay-ease); }
+button:active:not(:disabled) { transform: scale(0.97); }
+.button { border-radius: 8px; box-shadow: 0 1px 2px #24232108; }
+.button.primary, .send { background: var(--accent); border-color: var(--accent); }
+.logo { background: #f8e9df; color: var(--accent); border-radius: 9px; }
+.rail { background: #faf9f7; }
+.rail-brand { display: flex; align-items: center; gap: 10px; }
+.rail-brand > span, .rail-label, .sidebar-sessions { display: none; }
+.wordmark { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.wordmark .breadcrumb-slash { display: inline; font-size: 13px; color: #b1aca3; margin: 0; }
+.wordmark .workspace-dot { display: inline-block; margin: 0; width: 7px; height: 7px; flex: 0 0 7px; }
+.wordmark:has(.workspace-dot) { font-size: 13px; letter-spacing: -0.2px; }
+.intro h1 { font-size: 28px; letter-spacing: -0.8px; font-weight: 560; }
+.intro { margin: 12px 0 24px; }
+.intro p { margin-top: 8px; font-size: 13px; }
+.metrics { display: none; }
+.metric { border-radius: 10px; }
+.conversation { border-radius: 12px; box-shadow: 0 1px 3px #332d2408; }
+.agent-glyph { background: #f5ede6; color: #a56840; border-radius: 9px; }
+.agent-glyph.codex { background: #eef0ef; color: #45675e; }
+.agent-card { border-radius: 10px; border-color: var(--line); box-shadow: 0 1px 2px #332d2405; }
+.agent-card.selected { border-color: #e6bda5; background: #fcf0e9; }
+.agent-card h3 { font-size: 13px; font-weight: 500; }
+.agent-card .agent-summary { font-size: 11px; }
+.state { font-size: 10px; border-radius: 6px; }
+.state.working, .state.idle, .state.waiting { background: transparent; }
+.workspace-line { gap: 12px; }
+.workspace-picker {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 9px;
+  background: #eeece7;
+  min-width: 0;
+}
+.workspace-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 7px;
+  font-size: 12px;
+  color: var(--muted);
+  min-width: 0;
+}
+.workspace-pill[aria-pressed="true"] { color: var(--ink); background: #fff; box-shadow: 0 1px 3px #29231d14; }
+.workspace-pill[aria-pressed="true"] .workspace-dot { background: var(--accent); }
+.workspace-dot { display: inline-block; width: 7px; height: 7px; flex-shrink: 0; border-radius: 2px; background: #53738f; }
+.workspace-dot.work2 { background: #7e6b9d; }
+.workspace-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.workspace-count, .attention-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  padding: 3px 5px;
+  border-radius: 5px;
+  background: #eae8e3;
+  color: var(--muted);
+  font: 10px "Geist Mono", monospace;
+  flex-shrink: 0;
+}
+.attention-count { background: #f6e7c9; color: #805619; }
+.workspace-unavailable { font-size: 9px; color: #946319; }
+.directory-button { position: relative; border-radius: 8px; min-height: 44px; min-width: 44px; flex-shrink: 0; }
+.directory-button > .attention-count { position: absolute; top: 0; right: -2px; font-size: 9px; }
+.workspace-group-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 11px;
+  font-size: 11px;
+  font-weight: 550;
+  color: var(--muted);
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+.workspace-group-heading > span:last-child:not(.workspace-dot) { margin-left: auto; font: 10px "Geist Mono", monospace; letter-spacing: 0; }
+.workspace-session-group + .workspace-session-group { margin-top: 25px; }
+.sidebar-empty { font-size: 11px; color: var(--muted); padding: 5px 9px 12px; margin: 0; }
+.sidebar-session-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.sidebar-session-copy strong, .sidebar-session-copy > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sidebar-session-copy strong { font-size: 12px; font-weight: 550; }
+.sidebar-session-copy > span { font-size: 10px; color: var(--muted); }
+.sidebar-session { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; padding: 10px; min-height: 52px; border-radius: 8px; }
+.sidebar-session.selected { background: #fcf0e9; color: var(--accent); }
+.state-dot.idle { background: #a5a39d; }
+.state-dot.unknown { background: #8c8a84; }
+.pane-tag { border-color: #e7c9b6; color: var(--accent); }
+.terminal-wrap, .terminal-host .xterm, .term-history, .saved-transcript { background: #20211f; }
+.terminal-host .xterm .xterm-viewport { background-color: #20211f; }
+.term-input { background: #fdfcfb; border-top: 1px solid var(--line); }
+.term-input .key-bar { background: #f4f2ee; }
+.key-bar button { border-color: #e6e2da; background: #fff; color: var(--ink); box-shadow: 0 1px 1px #24232108; }
+.term-compose-field { background: #fff; border-color: #e6e2da; color: var(--ink); font-family: Geist, sans-serif; }
+.term-compose-field::placeholder { color: #777168; }
+.term-compose-insert { background: #fff; border-color: #e6e2da; color: var(--ink); }
+.term-compose-note { color: var(--amber); }
+
+/* Native modal gives the directory a focus boundary and makes the underlying
+   terminal inert. Opening it does not mount or resize another terminal. */
+.agent-directory {
+  border: 0;
+  padding: 0;
+  width: min(510px, calc(100% - 32px));
+  max-height: min(760px, 85dvh);
+  border-radius: 16px;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 25px 90px #29211d38;
+  overflow: hidden;
+}
+.agent-directory[open] { display: flex; flex-direction: column; }
+.agent-directory.pointer-open { transition: opacity 180ms var(--relay-ease), transform 180ms var(--relay-ease); }
+@starting-style { .agent-directory.pointer-open[open] { opacity: 0; transform: translateY(12px); } }
+.agent-directory::backdrop { background: #24211e55; backdrop-filter: blur(2px); }
+.directory-handle { display: none; }
+.directory-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 0; flex-shrink: 0; }
+.directory-head h2 { margin: 0; font-size: 20px; letter-spacing: -0.5px; font-weight: 580; }
+.directory-head .icon-button { display: flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border-radius: 8px; }
+#agent-directory-summary { padding: 0 20px; margin: 0; color: var(--muted); font-size: 12px; }
+.directory-tools { padding: 17px 20px 12px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+.directory-tools input { width: 100%; font-size: 16px; min-height: 44px; border: 1px solid #e8e5df; background: #f6f5f2; color: var(--ink); padding: 9px 12px; border-radius: 8px; }
+.directory-tools input::placeholder { color: #777168; }
+.directory-filters { display: flex; gap: 8px; margin-top: 10px; }
+.directory-filters button { display: flex; align-items: center; gap: 6px; min-height: 38px; padding: 0 10px; font-size: 12px; border-radius: 7px; color: var(--muted); }
+.directory-filters button[aria-pressed="true"] { background: #f2efea; color: var(--ink); }
+.directory-list { padding: 0 12px 14px; overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
+.directory-group + .directory-group { margin-top: 19px; }
+.directory-group .workspace-group-heading { padding: 0 8px; }
+.directory-session { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 78px; border-radius: 9px; text-align: left; padding: 12px 9px; }
+.directory-session.selected { background: #fcf0e9; }
+.directory-session .agent-glyph { flex-shrink: 0; width: 30px; height: 30px; }
+.directory-session-copy { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 0; }
+.directory-session-copy strong { font-size: 13px; font-weight: 550; overflow-wrap: anywhere; }
+.directory-project { font-size: 11px; color: var(--muted); overflow-wrap: anywhere; }
+.directory-task { font-size: 10px; color: #777168; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.directory-session .state { flex-shrink: 0; padding: 0; }
+.directory-selected { color: var(--accent); width: 18px; }
+.directory-empty { padding: 35px 10px; text-align: center; color: var(--muted); font-size: 12px; }
+.directory-footer { padding: 10px 20px; border-top: 1px solid var(--line); flex-shrink: 0; }
+.directory-footer .button { min-height: 40px; }
+
+/* The phone strip first chooses a workspace, then shows only its sessions.
+   The chosen session, including an ended open session, stays in that strip. */
+.session-workspaces { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--bg); }
+.session-workspaces .workspace-picker { flex: 1; }
+.session-workspaces .workspace-pill { flex: 1; min-height: 38px; }
+.session-workspaces .directory-button { background: #fff; border: 1px solid var(--line); }
+.session-switch { order: -1; }
+.session-switch-row { gap: 3px; padding: 0 10px; background: #fff; scroll-padding-left: 10px; position: relative; }
+.switch-chip { flex-direction: column; align-items: flex-start; justify-content: center; gap: 5px; width: 109px; max-width: 140px; min-height: 57px; padding: 9px; border: 0; border-radius: 0; position: relative; background: #fff; font-size: 12px; }
+.switch-chip.current { border: 0; box-shadow: none; color: var(--accent); }
+.switch-chip.current::after { content: ""; position: absolute; left: 9px; right: 9px; bottom: 0; height: 2px; background: var(--accent); }
+.switch-identity { display: flex; align-items: center; gap: 6px; width: 100%; min-width: 0; }
+.switch-name { min-width: 0; font-weight: 550; }
+.switch-identity .state-dot { width: 6px; height: 6px; }
+.switch-project { display: block; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 10px; font-weight: 400; color: var(--muted); }
+.switch-flag { min-width: 15px; width: 15px; height: 15px; font-size: 9px; background: #f6e7c9; color: #805619; }
+.switch-new { width: 44px; min-width: 44px; align-items: center; }
+
+@media (hover: hover) and (pointer: fine) {
+  .sidebar-session:hover, .directory-session:hover { background: #f2efea; }
+  .sidebar-session.selected:hover, .directory-session.selected:hover { background: #f9e9de; }
+  .workspace-pill:hover:not([aria-pressed="true"]), .directory-filters button:hover, .icon-button:hover { background: #efede8; }
+  .switch-chip:hover { background: #f7f5f1; }
+  .agent-card:hover { border-color: #d5cfc4; background: #fff; }
+}
+
+/* Tablet retains its existing session list beside the terminal. The wide
+   layout uses the approved grouped sidebar and gives that space to panes. */
+@media (min-width: 1180px) {
+  .app-shell { grid-template-columns: 242px minmax(0, 1fr); }
+  .rail { width: 242px; padding: 23px 13px 15px; gap: 22px; align-items: stretch; }
+  .rail-brand { padding: 0 9px; }
+  .rail-brand .logo { width: 30px; height: 30px; }
+  .rail-brand .logo svg { width: 21px; height: 21px; }
+  .rail-brand > span { display: block; font-size: 25px; font-weight: 620; letter-spacing: -1px; }
+  .rail-nav { align-items: stretch; gap: 3px; border-bottom: 1px solid var(--line); padding-bottom: 16px; }
+  .rail-label { display: inline; font-size: 13px; }
+  .rail-button { width: 100%; height: 42px; justify-content: flex-start; padding: 0 12px; gap: 11px; border-radius: 8px; }
+  .rail-button.active { background: #eeece7; box-shadow: none; }
+  .rail-button.active::before { display: none; }
+  .rail-nav svg { width: 18px; height: 18px; }
+  .sidebar-sessions { display: block; overflow-y: auto; overscroll-behavior: contain; flex: 1; min-height: 0; }
+  .sidebar-group + .sidebar-group { margin-top: 22px; }
+  .sidebar-group .workspace-group-heading { margin: 0 9px 9px; }
+  .rail-bottom { margin-top: auto; border-top: 1px solid var(--line); padding-top: 13px; }
+  .main { padding-left: 28px; padding-right: 28px; }
+  .dashboard.has-session > .agent-list { display: none; }
+  body.workspace-open .workspace-line { display: none; }
+  .dashboard.has-session { grid-template-columns: minmax(0, 1fr); }
+  .dashboard.split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .dashboard:not(.has-session):not(.split) { grid-template-columns: minmax(0, 1fr); }
+  .dashboard:not(.has-session):not(.split) > .conversation { display: none; }
+  .dashboard:not(.has-session) .workspace-session-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .dashboard:not(.has-session) .agent-card { margin-bottom: 0; }
+}
+
+@media (max-width: 760px) {
+  .topbar { height: 54px; }
+  .top-right { gap: 8px; }
+  .top-right > .directory-button { display: none; }
+  .phone-head { padding-top: 13px; }
+  .phone-head h1 { font-size: 25px; font-weight: 560; letter-spacing: -0.7px; }
+  .phone-counts, .phone-counts b { font-size: 12px; }
+  .phone-counts { gap: 14px; }
+  .workspace-line { margin-bottom: 18px; }
+  .workspace-line .workspace-picker { width: 100%; }
+  .workspace-line .workspace-pill { flex: 1; padding: 0 7px; font-size: 11px; min-height: 40px; }
+  .workspace-line .sync { display: none; }
+  .workspace-line .workspace-count { display: none; }
+  .chat-head { padding: 9px 11px; min-height: 60px; }
+  .chat-name h2 { font-size: 14px; }
+  .chat-name .agent-glyph { display: none; }
+  .chat-title .env-label { display: none; }
+  body.kb-open .chat-title .env-label { display: inline; }
+  .chat-head .pane-tools { gap: 3px; }
+  .chat-state { font-size: 10px; padding: 0 4px; }
+  body.touch .mobile-back { margin-left: -8px; margin-right: 0; }
+  .session-workspaces { padding: 6px 10px; }
+  .session-workspaces .workspace-pill { padding-left: 7px; padding-right: 7px; font-size: 12px; min-height: 38px; }
+  .session-workspaces .directory-button { min-height: 44px; }
+  .session-workspaces .workspace-unavailable { display: none; }
+  .agent-card { padding: 14px; }
+  .agent-card .agent-summary { display: none; }
+  .agent-card h3 { margin-top: 12px; }
+  .agent-kind, .agent-foot { font-size: 10px; }
+  .agent-directory { position: fixed; inset: auto 0 0; margin: 0; width: 100%; max-width: none; max-height: min(88dvh, var(--vvh, 88dvh)); border-radius: 19px 19px 0 0; padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .directory-handle { display: block; width: 30px; height: 4px; background: #d8d4cb; border-radius: 9px; margin: 9px auto 0; flex-shrink: 0; }
+  .directory-head { padding-top: 4px; }
+  .directory-head h2 { font-size: 19px; }
+  #agent-directory-summary { font-size: 11px; }
+  .directory-filters button { min-height: 44px; }
+  .directory-session .state { font-size: 9px; }
+  .directory-footer .button { min-height: 44px; }
+  body.chat-open .topbar, body.chat-open .mobile-nav { display: none; }
+  body.chat-open .main { padding: 0; }
+  body.chat-open .conversation { height: var(--vvh, 100dvh); min-height: 0; }
+}
+
+/* These are phone-screen selectors, so a tablet's on-screen keyboard cannot
+   accidentally replace the two-pane layout with the phone layout. */
+@media (pointer: coarse) and (min-width: 761px) {
+  body.phone-screen .rail { display: none; }
+  body.phone-screen .app-shell { grid-template-columns: minmax(0, 1fr); }
+  body.phone-screen .main { grid-column: 1; }
+  body.phone-screen .session-workspaces { padding: 2px 10px; }
+  body.phone-screen .session-workspaces .workspace-picker { flex: initial; }
+  body.phone-screen .session-switch-row { padding: 0 10px; }
+  body.phone-screen .switch-chip { min-height: 49px; padding-top: 5px; padding-bottom: 5px; }
+}
+@media (max-width: 360px) {
+  .session-workspaces { gap: 6px; padding-left: 7px; padding-right: 7px; }
+  .session-workspaces .workspace-pill { font-size: 11px; gap: 5px; padding: 0 6px; }
+  .session-workspaces .workspace-count { display: none; }
+  .switch-chip { width: 102px; }
+}
+@media (pointer: coarse) {
+  .workspace-pill { min-height: 44px; }
+  .sidebar-session { min-height: 52px; }
+  .modal input, .modal select, .modal textarea { font-size: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  button, .agent-directory.pointer-open { transition: none; }
+  @starting-style { .agent-directory.pointer-open[open] { opacity: 1; transform: none; } }
+}

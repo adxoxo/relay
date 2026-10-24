@@ -1,0 +1,21 @@
+# relay work containers (systemd user unit).
+# Rendered by 'relay service install --containers': @PODMAN@ becomes an absolute path.
+# This unit starts job-work1 and job-work2 on login.
+# Note: work2 mounts the host Docker socket. That mount refreshes on each
+# container start, so starting the containers here keeps the mount fresh.
+# Enable this unit only when linger is on (loginctl enable-linger). Without
+# linger the user manager stops at logout and would stop the containers.
+[Unit]
+Description=relay work containers (job-work1, job-work2)
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Wait up to 60 s for the host Docker socket, then continue regardless.
+ExecStartPre=/bin/sh -c 'for i in $(seq 1 60); do [ -S /run/docker.sock ] && break; sleep 1; done; true'
+ExecStart=@PODMAN@ start job-work1 job-work2
+ExecStop=@PODMAN@ stop -t 20 job-work1 job-work2
+TimeoutStartSec=180
+
+[Install]
+WantedBy=default.target
